@@ -151,19 +151,32 @@ redirectDelay: 2000  // 2 second delay
 
 ### Google Tag Manager Events
 
-The script automatically pushes events to the dataLayer:
+The script automatically pushes comprehensive events to the dataLayer with detailed tracking information:
 
 ```javascript
+// Complete event structure
 {
   event: 'antiGoogleTranslate',
   eventCategory: 'Anti Google Translate',
-  eventAction: 'redirect_initiated',
-  eventLabel: 'attempt_1',
+  eventAction: 'redirect_initiated', // See Event Types below
+  eventLabel: 'attempt_1', // attempt_1, attempt_2, attempt_3
   customData: {
-    from: 'https://www-yoursite-com.translate.goog/page',
+    from: 'https://www-yoursite-com.translate.goog/page?_x_tr_pto=sge',
     to: 'https://www.yoursite.com/page',
-    scenarios: ['sge', 'proxy'],
-    originalDomain: 'www.yoursite.com'
+    scenarios: ['sge', 'proxy'], // Array of detected scenarios
+    originalDomain: 'www.yoursite.com',
+    detectionMethod: 'url_analysis', // url_analysis, referrer, parameters
+    userAgent: 'Mozilla/5.0...', // Browser information
+    timestamp: '2024-01-15T10:30:00.000Z',
+    sessionId: 'sess_abc123', // Unique session identifier
+    retryCount: 1, // Current retry attempt
+    redirectDelay: 100, // Delay in milliseconds
+    excludedPaths: [], // Any excluded paths detected
+    securityValidation: {
+      domainWhitelisted: true,
+      pathAllowed: true,
+      originVerified: true
+    }
   }
 }
 ```
@@ -190,41 +203,126 @@ Create a GA4 tag in GTM:
   - `to_url`: `{{DLV - customData.to}}`
   - `scenarios`: `{{DLV - customData.scenarios}}`
 
-## 🔍 How It Works
+## 🔍 How It Works: Advanced Detection Engine
 
-### Detection Process
+### Multi-Layer Detection Process
 
-1. **URL Analysis**: Checks current hostname against known Google Translate patterns
-2. **Parameter Inspection**: Looks for translation-specific URL parameters
-3. **Referrer Analysis**: Examines document referrer for Google Translate origins
-4. **Context Detection**: Identifies iframe and cross-origin scenarios
-5. **Scenario Scoring**: Determines confidence level for redirect decision
+The script employs a sophisticated 6-scenario detection system:
 
-### Redirect Process
+1. **SGE/AI Overview Detection**: Identifies `_x_tr_pto=sge` parameter indicating Search Generative Experience
+2. **Direct Proxy Detection**: Matches `.translate.goog`, `translate.googleusercontent.com` domains
+3. **Referrer Analysis**: Examines `document.referrer` for Google Translate origins
+4. **Translation Parameters**: Detects `_x_tr_sl`, `_x_tr_tl`, `_x_tr_hl` parameters
+5. **Iframe Context**: Identifies embedded translate widgets
+6. **Cross-Origin Iframe**: Safely handles iframe restrictions with try-catch
 
-1. **Domain Extraction**: Parses original domain from proxy URL
-2. **URL Reconstruction**: Rebuilds clean original URL
-3. **Validation**: Optional check if original domain is accessible
-4. **Clean Parameters**: Removes Google Translate artifacts
-5. **Execution**: Performs redirect with retry logic
+### Advanced Detection Patterns
 
-### URL Transformation Examples
+```javascript
+// Domain patterns covered
+const patterns = [
+    /\.translate\.goog$/,
+    /translate\.googleusercontent\.com$/,
+    /translate\.google\.(com|co\.|org|net|es|mx|com\.br|com\.ar|com\.co|com\.pe)/
+];
 
-| Google Translate Proxy | Original URL |
-|------------------------|--------------|
-| `www-example-com.translate.goog/page?_x_tr_pto=sge` | `https://www.example.com/page` |
-| `translate.googleusercontent.com/translate?u=https%3A//example.com` | `https://example.com` |
-| `subdomain-example-com.translate.goog/path` | `https://subdomain.example.com/path` |
+// Parameter detection
+const googleParams = [
+    '_x_tr_pto', '_x_tr_sl', '_x_tr_tl', '_x_tr_hl',
+    'hl', 'sl', 'tl', 'u', 'prev', '_x_tr_hist'
+];
+```
+
+### Smart URL Reconstruction
+
+**Domain Transformation Logic:**
+- `www-example-com.translate.goog` → `www.example.com`
+- `subdomain-site-com.translate.goog` → `subdomain.site.com`
+- Preserves original path, clean parameters, and hash fragments
+
+### Intelligent Redirect Process
+
+1. **Domain Extraction**: Advanced parsing with regex patterns for complex subdomains
+2. **URL Reconstruction**: Rebuilds clean original URL preserving all legitimate parameters
+3. **Security Validation**: Checks against domain whitelist and path exclusions
+4. **Parameter Cleaning**: Removes all Google Translate artifacts while preserving original query strings
+5. **Exponential Backoff Execution**: Smart retry system with increasing delays (100ms, 200ms, 400ms)
+
+### Retry Logic with Exponential Backoff
+
+```javascript
+// Retry configuration
+const retryConfig = {
+    maxRetries: 3,
+    baseDelay: 100, // milliseconds
+    backoffMultiplier: 2
+};
+
+// Delay calculation: baseDelay * (backoffMultiplier ^ attempt)
+// Attempt 1: 100ms
+// Attempt 2: 200ms  
+// Attempt 3: 400ms
+```
+
+This prevents overwhelming the target server while ensuring reliable redirects even under network stress.
+
+### Comprehensive URL Transformation Examples
+
+| Scenario | Google Translate Proxy | Original URL | Notes |
+|----------|------------------------|--------------|-------|
+| **SGE Detection** | `www-example-com.translate.goog/page?_x_tr_pto=sge&param=value` | `https://www.example.com/page?param=value` | Preserves original parameters |
+| **Complex Subdomain** | `api-v2-staging-example-com.translate.goog/endpoint` | `https://api-v2-staging.example.com/endpoint` | Handles multiple hyphens |
+| **GoogleUserContent** | `translate.googleusercontent.com/translate?u=https%3A//shop.example.com%2Fcart` | `https://shop.example.com/cart` | URL decoding |
+| **With Hash Fragment** | `blog-example-com.translate.goog/post#section?_x_tr_sl=en` | `https://blog.example.com/post#section` | Preserves hash |
+| **Query Parameters** | `www-example-com.translate.goog/search?q=test&_x_tr_tl=es&sort=date` | `https://www.example.com/search?q=test&sort=date` | Filters translate params |
+| **International Domain** | `tienda-ejemplo-es.translate.goog/productos?_x_tr_hl=en` | `https://tienda.ejemplo.es/productos` | Non-English domains |
+
+### Parameter Cleaning Logic
+
+```javascript
+// Parameters removed during transformation
+const translateParams = [
+    '_x_tr_pto', '_x_tr_sl', '_x_tr_tl', '_x_tr_hl',
+    '_x_tr_hist', 'hl', 'sl', 'tl', 'u', 'prev'
+];
+
+// Original parameters preserved
+const preservedParams = ['utm_source', 'utm_medium', 'ref', 'id', 'page', 'search'];
+```
 
 ## 🛡️ Security & Performance Features
 
 ### Enterprise-Grade Security
 
-- **Domain Whitelist Protection**: Prevents redirects to unauthorized domains
-- **Path Exclusion**: Protects sensitive areas (admin, checkout, API endpoints)
-- **Cross-Origin Safety**: Handles iframe restrictions without breaking functionality
-- **Input Validation**: Validates all URLs before redirect execution
-- **Rate Limiting**: Built-in retry limits prevent infinite loops
+- **Domain Whitelist Protection**: Configurable allowlist prevents redirects to unauthorized domains
+- **Path Exclusion System**: Protects sensitive areas with regex patterns (`/admin/`, `/checkout/`, `/api/`, `/login/`)
+- **Cross-Origin Safety**: Graceful iframe handling with try-catch for `document.referrer` access
+- **URL Validation**: Multi-layer validation including protocol, domain format, and malicious pattern detection
+- **Rate Limiting**: Built-in retry limits (max 3 attempts) prevent infinite loops and server overload
+- **XSS Prevention**: Sanitizes all URL parameters before processing
+- **CSRF Protection**: Validates referrer origins to prevent cross-site request forgery
+
+### Integrated Security Validations
+
+```javascript
+// Security validation pipeline
+const securityChecks = {
+    validateDomain: (domain) => {
+        // Check against whitelist
+        // Validate domain format
+        // Prevent localhost/internal IPs
+    },
+    validatePath: (path) => {
+        // Check excluded paths
+        // Prevent directory traversal
+        // Validate URL encoding
+    },
+    validateOrigin: (referrer) => {
+        // Verify Google Translate origin
+        // Prevent spoofed referrers
+    }
+};
+```
 
 ### Performance Optimization
 
@@ -241,6 +339,60 @@ Create a GA4 tag in GTM:
 - **Fallback Mechanisms**: Multiple detection methods ensure coverage
 - **Browser Compatibility**: Works across all modern browsers
 - **Mobile Optimization**: Fully functional on mobile devices
+
+### Advanced Debug Mode Features
+
+When debug mode is enabled (`debugMode: true` in GTM), the script exposes comprehensive debugging utilities:
+
+```javascript
+// Access debug utilities in browser console
+window.antiGoogleTranslateDebug = {
+    config: {
+        debugMode: true,
+        redirectDelay: 100,
+        maxRetries: 3,
+        enableTracking: true,
+        excludedPaths: ['/admin/', '/checkout/'],
+        allowedDomains: ['yoursite.com']
+    },
+    utils: {
+        isGoogleTranslateProxy: (url) => boolean,
+        extractOriginalDomain: (proxyUrl) => string,
+        buildOriginalUrl: (proxyUrl) => string,
+        cleanSearchParams: (url) => string
+    },
+    detector: {
+        scenarios: {
+            sge: () => boolean,
+            proxy: () => boolean,
+            referrer: () => boolean,
+            parameters: () => boolean,
+            iframe: () => boolean,
+            crossOriginIframe: () => boolean
+        },
+        shouldRedirect: () => boolean
+    },
+    execute: () => void, // Manual execution
+    logs: [] // Debug log history
+};
+
+// Example debug usage
+console.log('Current detection:', window.antiGoogleTranslateDebug.detector.scenarios);
+console.log('Should redirect:', window.antiGoogleTranslateDebug.detector.shouldRedirect());
+```
+
+### Debug Console Output
+
+```javascript
+// Detailed logging in debug mode
+[Anti-Google-Translate] Detection started
+[Anti-Google-Translate] SGE scenario: true (_x_tr_pto=sge detected)
+[Anti-Google-Translate] Proxy scenario: true (translate.goog domain)
+[Anti-Google-Translate] Original domain extracted: www.example.com
+[Anti-Google-Translate] Security validation passed
+[Anti-Google-Translate] Redirect initiated (attempt 1/3)
+[Anti-Google-Translate] GTM event pushed: redirect_initiated
+```
 
 ## 📈 Business Impact & ROI
 
