@@ -1,8 +1,8 @@
 # Anti Google Translate Proxy Script
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![GitHub issues](https://img.shields.io/github/issues/yourusername/anti-google-translate-proxy)](https://github.com/yourusername/anti-google-translate-proxy/issues)
-[![GitHub stars](https://img.shields.io/github/stars/yourusername/anti-google-translate-proxy)](https://github.com/yourusername/anti-google-translate-proxy/stargazers)
+[![GitHub issues](https://img.shields.io/github/issues/Root-FTW/anti-google-translate-sge)](https://github.com/Root-FTW/anti-google-translate-sge/issues)
+[![GitHub stars](https://img.shields.io/github/stars/Root-FTW/anti-google-translate-sge)](https://github.com/Root-FTW/anti-google-translate-sge/stargazers)
 
 > **Reclaim your international traffic from Google's automatic translation proxies**
 
@@ -417,8 +417,8 @@ We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/yourusername/anti-google-translate-proxy.git
-   cd anti-google-translate-proxy
+   git clone https://github.com/Root-FTW/anti-google-translate-sge.git
+   cd anti-google-translate-sge
    ```
 
 2. **Install dependencies**:
@@ -438,7 +438,7 @@ We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.
 
 ### Reporting Issues
 
-Please use our [GitHub Issues](https://github.com/yourusername/anti-google-translate-proxy/issues) to report:
+Please use our [GitHub Issues](https://github.com/Root-FTW/anti-google-translate-sge/issues) to report:
 
 - 🐛 **Bugs**: Unexpected behavior or errors
 - 💡 **Feature requests**: New functionality ideas  
