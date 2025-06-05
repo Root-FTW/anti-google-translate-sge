@@ -565,29 +565,6 @@ Server-side redirects won't work for Google's proxies since they serve the conte
 
 We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md).
 
-### Development Setup
-
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/Root-FTW/anti-google-translate-sge.git
-   cd anti-google-translate-sge
-   ```
-
-2. **Install dependencies**:
-   ```bash
-   npm install
-   ```
-
-3. **Run tests**:
-   ```bash
-   npm test
-   ```
-
-4. **Build minified version**:
-   ```bash
-   npm run build
-   ```
-
 ### Reporting Issues
 
 Please use our [GitHub Issues](https://github.com/Root-FTW/anti-google-translate-sge/issues) to report:
