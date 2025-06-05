@@ -449,33 +449,7 @@ Please use our [GitHub Issues](https://github.com/yourusername/anti-google-trans
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
 
-- **Metehan Yesilyurt** ([@metehan777](https://twitter.com/metehan777)) - First to highlight this issue
-- **Patrick Stox** - SEO insights and analysis
-- **Ahrefs Team** - Research and data on Google Translate proxy impact
-- **Community contributors** - Bug reports and feature requests
-
-## 📞 Support
-
-- 📖 **Documentation**: [Full docs](https://github.com/yourusername/anti-google-translate-proxy/wiki)
-- 💬 **Discussions**: [GitHub Discussions](https://github.com/yourusername/anti-google-translate-proxy/discussions)
-- 🐛 **Issues**: [Report bugs](https://github.com/yourusername/anti-google-translate-proxy/issues)
-- 📧 **Email**: support@yourdomain.com
-
-## 🗺️ Roadmap
-
-### Version 2.0 (Q3 2025)
-- [ ] Server-side detection capabilities
-- [ ] WordPress plugin version
-- [ ] Shopify app integration
-- [ ] Advanced analytics dashboard
-
-### Version 2.1 (Q4 2025)
-- [ ] Machine learning detection
-- [ ] A/B testing framework
-- [ ] Real-time monitoring
-- [ ] CDN integration
 
 ---
 
