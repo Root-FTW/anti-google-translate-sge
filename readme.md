@@ -491,11 +491,17 @@ This project is built on extensive research and analysis of the Google Translate
    - Identified the March 2025 core update impact
    - Provided country-by-country traffic analysis
 
-2. **SEO Expert Insights**: Patrick Stox's analysis of Google's hreflang hypocrisy
+2. **Metehan.ai European Study**: ["Google Translate Proxy Pages Are Dominating AI Overviews in Europe"](https://metehan.ai/blog/google-translate-proxy-pages-are-dominating-ai-overviews-in-europe-too-and-no-one-controls-it/)
+   - **658M+ monthly traffic** controlled by Google globally
+   - **European AI Overview dominance**: 109K+ appearances in Spain, 57K+ in Germany
+   - **Exponential growth**: +40,981,900% increase in Germany (April-May)
+   - **Global scale**: 90M+ monthly traffic in Brazil, 100M+ in India, 10M+ queries in Turkey
+
+3. **SEO Expert Insights**: Patrick Stox's analysis of Google's hreflang hypocrisy
    - Highlighted Google's contradictory approach to translation
    - Documented the shift from helping creators to capturing traffic
 
-3. **GSQI Case Study**: ["Auto-translating Content & Google's Scaled Content Abuse"](https://www.gsqi.com/marketing-blog/auto-translating-content-google-scaled-content-abuse/)
+4. **GSQI Case Study**: ["Auto-translating Content & Google's Scaled Content Abuse"](https://www.gsqi.com/marketing-blog/auto-translating-content-google-scaled-content-abuse/)
    - Reddit's massive AI translation implementation (2.3M+ URLs per country)
    - Google's inconsistent policy enforcement
    - Evidence of Google's "sanctioned" approach to AI translations
