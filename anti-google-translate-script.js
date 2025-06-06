@@ -281,7 +281,7 @@ window.antiGoogleTranslateLoaded = true;
                 
                 // Perform redirect
                 const executeRedirect = function() {
-                    window.location.href = originalUrl;
+                    window.location.replace(originalUrl);
                 };
                 
                 if (CONFIG.redirectDelay > 0) {
@@ -294,7 +294,7 @@ window.antiGoogleTranslateLoaded = true;
                 logger.error('Redirect attempt failed:', error);
                 
                 if (this.attempts < CONFIG.maxRetries) {
-                    const retryDelay = 1000 * this.attempts; // Exponential backoff
+                    const retryDelay = 100 * Math.pow(2, this.attempts - 1); // True exponential backoff
                     logger.log('Retrying in', retryDelay, 'ms');
                     setTimeout(() => this.redirect(scenarios), retryDelay);
                 } else {
